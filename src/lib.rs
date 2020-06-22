@@ -13,7 +13,7 @@ pub type Error = ResolveError;
 
 pub type BlockList = Domain;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Domain(Name);
 
 impl Domain {
@@ -96,7 +96,7 @@ impl DNSBL {
         }
     }
 }
-
+#[derive(PartialEq)]
 pub enum BlockStatus {
     Blocked { message: Option<String> },
     NotBlocked,
