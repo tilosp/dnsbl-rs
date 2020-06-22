@@ -4,7 +4,7 @@ use std::net::IpAddr;
 use trust_dns_resolver::{
     config::{ResolverConfig, ResolverOpts},
     error::ResolveError,
-    Name, Resolver,
+    Name, TokioAsyncResolver,
 };
 
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -43,23 +43,25 @@ impl<'de> Deserialize<'de> for Domain {
 }
 
 pub struct DNSBL {
-    resolver: Resolver,
+    resolver: TokioAsyncResolver,
 }
 
 impl DNSBL {
-    pub fn new() -> Result<Self, Error> {
-        let resolver = Resolver::new(ResolverConfig::cloudflare_tls(), ResolverOpts::default())?;
+    pub async fn new() -> Result<Self, Error> {
+        let resolver =
+            TokioAsyncResolver::tokio(ResolverConfig::cloudflare_tls(), ResolverOpts::default())
+                .await?;
         Ok(Self { resolver })
     }
 
-    pub fn check_domain(&self, list: &BlockList, domain: &Domain) -> BlockStatus {
+    pub async fn check_domain(&self, list: &BlockList, domain: &Domain) -> BlockStatus {
         let dns_name =
             Name::from_labels(domain.0.into_iter().chain(&list.0)).expect("always valid");
 
-        self.check(dns_name)
+        self.check(dns_name).await
     }
 
-    pub fn check_ip<A: Into<IpAddr>>(&self, list: &BlockList, ip_addr: A) -> BlockStatus {
+    pub async fn check_ip<A: Into<IpAddr>>(&self, list: &BlockList, ip_addr: A) -> BlockStatus {
         let ip: Name = ip_addr.into().into();
 
         let dns_name = Name::from_labels(
@@ -69,13 +71,13 @@ impl DNSBL {
         )
         .expect("always valid");
 
-        self.check(dns_name)
+        self.check(dns_name).await
     }
 
-    fn check(&self, dns_name: Name) -> BlockStatus {
-        if self.resolver.ipv4_lookup(dns_name.clone()).is_err() {
+    async fn check(&self, dns_name: Name) -> BlockStatus {
+        if self.resolver.ipv4_lookup(dns_name.clone()).await.is_err() {
             BlockStatus::NotBlocked
-        } else if let Ok(txt) = self.resolver.txt_lookup(dns_name) {
+        } else if let Ok(txt) = self.resolver.txt_lookup(dns_name).await {
             let message = txt
                 .iter()
                 .map(|i| {
