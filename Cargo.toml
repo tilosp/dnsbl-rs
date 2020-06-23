@@ -7,6 +7,10 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/tilosp/dnsbl-rs"
 homepage = "https://crates.io/crates/dnsbl"
 description = "Check IPs against DNSBL"
+include = [
+    "/Cargo.toml",
+    "/src/**",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
