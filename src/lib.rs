@@ -47,10 +47,9 @@ pub struct DNSBL {
 }
 
 impl DNSBL {
-    pub async fn new() -> Result<Self, Error> {
+    pub fn new() -> Result<Self, Error> {
         let resolver =
-            TokioAsyncResolver::tokio(ResolverConfig::cloudflare_tls(), ResolverOpts::default())
-                .await?;
+            TokioAsyncResolver::tokio(ResolverConfig::cloudflare_tls(), ResolverOpts::default())?;
         Ok(Self { resolver })
     }
 
