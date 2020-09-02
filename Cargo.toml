@@ -6,9 +6,15 @@ edition = "2018"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/tilosp/dnsbl-rs"
 homepage = "https://crates.io/crates/dnsbl"
+documentation = "https://docs.rs/dnsbl"
+keywords = ["dns", "dnsbl"]
 description = "Check IPs against DNSBL"
+readme = "README.md"
 include = [
     "/Cargo.toml",
+    "/LICENSE-APACHE",
+    "/LICENSE-MIT",
+    "/README.md",
     "/src/**",
 ]
 
