@@ -21,5 +21,5 @@ include = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-trust-dns-resolver = { version = "0.20", default-features = false, features = ["tokio-runtime", "dns-over-rustls"] }
+trust-dns-resolver = { version = "0.22", default-features = false, features = ["tokio-runtime", "dns-over-rustls"] }
 serde = { version = "1.0", features = ["derive"] }
